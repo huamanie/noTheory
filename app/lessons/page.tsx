@@ -2,7 +2,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import '../../styles/globals.css'
 import {notes} from '../../components/globals/globals'
-import Staff from './Staff'
+import Link from 'next/link'
 import { ButtonGroup } from '../../components/ButtonGroup'
 import vexflow, { Factory, EasyScore, System, Renderer, Stave, StaveNote, Voice, Formatter, Stem, Annotation, drawDot, RenderContext, ModifierContext, TickContext } from 'vexflow'
 
@@ -32,6 +32,7 @@ function draw(
     return note;
 }
 
+
 // const colorDecendants = (parentItem: SVGElement, color: string) => () => {
 //     parentItem.querySelectorAll('*').forEach((child) => {
 //         child.setAttribute('fill', color);
@@ -47,7 +48,6 @@ function getRandomArbitrary(min: number=1, max: number) {
 
 
 const addRandomSingleNote = (lowestRange: number, highestRange: number) => {
-
     let randomNote = getRandomArbitrary(0,notes.length) % notes.length
     let randomOctave = getRandomArbitrary(lowestRange, highestRange+1)
 
@@ -61,32 +61,34 @@ export default function Lesson1() {
     const [isCorrect, setIsCorrect] = useState(false)
     const [hasAnswered, setHasAnswered] = useState(false)
     const [currentQuestion, setCurrentQuestion] = useState(1)
-    const [answer, setAnswer] = useState((lowestRange: number = 4, highestRange: number = 5) => {
-        let randomNote = getRandomArbitrary(0, notes.length) % notes.length
-        let randomOctave = getRandomArbitrary(lowestRange, highestRange+1)
-        return notes[randomNote] + '/' + randomOctave
-    })
+    const [answer, setAnswer] = useState('g/4') //initial 
 
     const userAns = {note: '', octave: ''}
 
+    //Without this, would cause randomization not to work and cause santization errors
+    useEffect(()=> {
+        setAnswer(addRandomSingleNote(4,5))
+    },[])
+
     useEffect(() => {
-            document.getElementById('output')?.replaceChildren();
-            const renderer = new Renderer("output", Renderer.Backends.SVG)
-            renderer.resize(253, 250)
+            if (currentQuestion < totalQuestions) {
+                document.getElementById('output')?.replaceChildren();
+                const renderer = new Renderer("output", Renderer.Backends.SVG)
+                renderer.resize(253, 250)
 
-            const context = renderer.getContext()
-            context.scale(2.5, 2.5)
+                const context = renderer.getContext()
+                context.scale(2.5, 2.5)
 
-            const stave = new Stave(0,0, 100)
-            stave.addClef("treble").setContext(context).draw()
-            
-            console.log(answer)
-            let notesToStave = new StaveNote({keys: [answer], duration: 'w'})
+                const stave = new Stave(0,0, 100)
+                stave.addClef("treble").setContext(context).draw()
+                
+                console.log(answer)
+                let notesToStave = new StaveNote({keys: [answer], duration: 'w'})
 
-            let finalize = draw(notesToStave, stave, context, 1*15)
+                let finalize = draw(notesToStave, stave, context, 1*15)
+            }
 
-    }, [currentQuestion])
-
+    }, [currentQuestion, answer])
 
     function isUserCorrect() {
         if (userAns.note !== '' && userAns.octave !== '') setHasAnswered(true)
@@ -95,43 +97,78 @@ export default function Lesson1() {
     }
 
     function nextQuestion() {
-        setCurrentQuestion(currentQuestion + 1)
-        setIsCorrect(false)
-        setHasAnswered(false)
-        setAnswer(addRandomSingleNote(4,5))
+        if (!isCorrect) {
+            setIsCorrect(false)
+            setHasAnswered(false)
+            setAnswer(addRandomSingleNote(4,5))
+        } else{
+            setCurrentQuestion((currentQuestion) => currentQuestion + 1)
+            setIsCorrect(false)
+            setHasAnswered(false)
+            setAnswer(addRandomSingleNote(4,5))
+        }
     }
 
     return (
-        <div className="border-4 border-solid border-red-700 ">
-            <div className="border-4 border-solid border-orange-600 text-center text-4xl">Question {currentQuestion}</div>
-            <div id="output" className="grid place-items-center border-4 border-solid border-blue-700"></div>
-            <div className='grid place-items-center border-4 border-solid border-gray-700 text-3xl p-3'>Identify the note and octave.</div> 
-            <div className={`border-4 border-solid border-green-700 p-1 ${ hasAnswered ? 'pointer-events-none': ''}`}>
-                <ButtonGroup
-                    onChange={(index) => {
-                        userAns.note = notes[index]
-                        console.log(userAns)
-                        isUserCorrect()
-                    }}
-                    labelText={'Notes'}
-                    options={notes.map(val => val.toUpperCase())} 
-                    />                
-            </div>
-            <div className={`border-4 border-solid border-purple-400 ${ hasAnswered ? 'pointer-events-none' : ''}`}>
-                <ButtonGroup
-                    onChange={(index) => {
-                        userAns.octave = String(index+1)
-                        console.log(userAns)
-                        isUserCorrect()
-                    }}
-                    labelText={'Notes'}
-                    options={['1', '2', '3', '4', '5', '6', '7']} 
-                    />                
-            </div>
-            <div className={`border-4 border-solid border-purple-700 flex justify-center text-3xl gap-10 ${hasAnswered ? '' : 'hidden'}`}>
-                    { isCorrect ? <h3> Correct! </h3>: <h3> Incorrect :&#40; </h3>}
-                    <button className='' onClick={nextQuestion}> Continue. </button>
-            </div>
+        <div className="border-4 border-solid border-red-700 h-screen p-auto">
+            {currentQuestion === 10? 
+                <>
+                    <div className='text-center'>
+                        <h3 className='text-3xl'>GOOD JOB</h3>
+                        <Link href='/'>
+                            <button>CONTINUE</button>
+                        </Link>
+                    </div>
+                </> : 
+                <>
+                    <div className='border-4 border-solid border-black text-4xl'> 
+                        <Link href='/'>
+                            <button>X</button>
+                        </Link>
+                    </div>
+                    <div className="border-4 border-solid border-orange-600 text-center text-4xl"> Question {currentQuestion}</div>
+                    <div id="output" className="grid place-items-center border-4 border-solid border-blue-700"></div>  {/* output is the SVG image to include */}
+                    <div className='grid place-items-center border-4 border-solid border-gray-700 text-3xl p-3'>Identify the note and octave.</div> 
+                    <div className='border-4 border-solid border-green-700 p-1 flex justify-center flex-wrap gap-10'>
+                        <div className={`border-4 border-solid border-green-700 p-1 flex-col flex-wrap w-96 ${ hasAnswered ? 'pointer-events-none': ''}`}>
+                            <ButtonGroup
+                                onChange={(index) => {
+                                    userAns.note = notes[index]
+                                    console.log(userAns)
+                                }}
+                                labelText={'Notes'}
+                                options={notes.map(val => val.toUpperCase())} 
+                                hasAnswered={hasAnswered}
+                                />                
+                        </div>
+                        <div className={`border-4 border-solid border-purple-400 p-1 flex-col flex-wrap w-96 ${ hasAnswered ? 'pointer-events-none' : ''}`}>
+                            <ButtonGroup
+                                onChange={(index) => {
+                                    userAns.octave = String(index+1)
+                                    console.log(userAns)
+                                }}
+                                labelText={'Notes'}
+                                options={['1', '2', '3', '4', '5', '6', '7']} 
+                                hasAnswered={hasAnswered}
+                                />                
+                        </div>
+                    </div>
+                    <div className={`border-4 border-solid border-purple-700 flex justify-center text-3xl ${!hasAnswered ? '' : 'hidden'}`}> 
+                        <button className='flex' onClick={() => isUserCorrect()} tabIndex={-1}>Check</button>
+                    </div>
+                    <div className={`border-4 border-solid border-purple-700 ${hasAnswered ? '' : 'hidden'}`}>
+                            { isCorrect ? 
+                                <div className='bg-green-600 flex justify-center text-3xl gap-10'>
+                                    <h3 className='bg-green-600'>Correct!</h3>
+                                    <button className='' onClick={() => nextQuestion()} tabIndex={-1}> Continue </button>
+                                </div> : 
+                                <div className='bg-red-700 flex justify-center text-3xl gap-10'>
+                                    <h3> Incorrect :&#40; Answer: {answer}</h3>
+                                    <button className='' onClick={() => nextQuestion()} tabIndex={-1}> Continue </button>
+                                </div>
+                            }
+                    </div>
+                </>}
         </div>  
     )
 }

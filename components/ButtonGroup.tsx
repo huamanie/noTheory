@@ -1,4 +1,4 @@
-import react, { useState } from 'react'
+import react, { useEffect, useState } from 'react'
 import { Option } from './Option'
 
 interface IProps {
@@ -6,11 +6,18 @@ interface IProps {
     onChange?:(selectedItems:number) => void,
     value?: number,
     labelText?: string,
+    hasAnswered: boolean
 }
 
-export const ButtonGroup = ({options, onChange, value, labelText}: IProps) => {
+export const ButtonGroup = ({options, onChange, value, labelText, hasAnswered}: IProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number|undefined>(value)
 
+    useEffect(()=> {
+        if (hasAnswered) {
+            setSelectedIndex(undefined)
+        }
+    }, [selectedIndex, hasAnswered])
+    
     function onSelect(index: number) {
         setSelectedIndex(index)
         onChange && onChange(index)
@@ -20,10 +27,11 @@ export const ButtonGroup = ({options, onChange, value, labelText}: IProps) => {
         <div className='flex flex-row flex-wrap gap-6 justify-center'>
             { options.map((curr, index) => (
                 <Option
-                    key={index} 
+                    key={index}
                     index={index}
                     selectedIndex={selectedIndex}
-                    onSelect={(index) => onSelect(index)}>
+                    onSelect={(index) => onSelect(index)} 
+                    hasAnswered={hasAnswered}>
                         {curr}
                 </Option>
             ))}
