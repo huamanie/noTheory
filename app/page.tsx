@@ -7,10 +7,12 @@ import SecondPage from './SecondPage'
 
 export default function HomePage() {
     return (
-        <div className="border-4 border-solid border-red-700">
+        <>
             <NavBar/>
-            <FirstPage/>
-            <SecondPage/>
-        </div>
+            <div className="grid place-content-center justify-items-center">
+                <FirstPage/>
+                <SecondPage/>
+            </div>
+        </>
     )
 }
