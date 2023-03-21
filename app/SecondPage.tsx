@@ -18,7 +18,7 @@ export default function SecondPage() {
                 />
             </div>
             <div className='flex flex-col justify-center w-3/4'>
-                <h2 className='font-bold text-center text-3xl mb-10'>What makes NoTheory different?</h2> 
+                <h2 className='font-bold text-green-1 text-center text-3xl mb-10'>What makes NoTheory different?</h2> 
                 <h3 className='text-center text-xl mb-4'>
                     Instead of spending hours behind pages of text, jump right
                     into it with interactive lessons.
@@ -30,7 +30,7 @@ export default function SecondPage() {
             </div>
             <div className='my-4 m-auto w-full h-0.5 rounded-full relative border-gray-400 border-2 border-solid'></div> {/* line break */}
             <div className='flex flex-col justify-center w-3/4 mb-20'>
-                <h2 className='font-bold text-center text-3xl mb-10 mt-20'>Why learn Music Theory?</h2>
+                <h2 className='font-bold text-green-1 text-center text-3xl mb-10 mt-20'>Why learn Music Theory?</h2>
                 <h3 className='text-center text-xl mb-10'>
                     Not only will it expand your knowledge of music, but it is
                     the foundation that can help construct your own music and

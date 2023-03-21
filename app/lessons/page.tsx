@@ -32,7 +32,6 @@ function draw(
     return note;
 }
 
-
 // const colorDecendants = (parentItem: SVGElement, color: string) => () => {
 //     parentItem.querySelectorAll('*').forEach((child) => {
 //         child.setAttribute('fill', color);
@@ -46,7 +45,6 @@ function getRandomArbitrary(min: number=1, max: number) {
     return Math.floor(Math.random() * (max - min) + min)
 }
 
-
 const addRandomSingleNote = (lowestRange: number, highestRange: number) => {
     let randomNote = getRandomArbitrary(0,notes.length) % notes.length
     let randomOctave = getRandomArbitrary(lowestRange, highestRange+1)
@@ -54,10 +52,19 @@ const addRandomSingleNote = (lowestRange: number, highestRange: number) => {
     return notes[randomNote] + '/' + randomOctave
 }
 
-export default function Lesson1() {
+function scaleSVGImage(screenWidth: number, screenHeight: number) {
+    //return [sizeW, sizeH, scale]
+    if (screenWidth > 1920) { 
+        return [404, 400, 4]
+    } else if (screenWidth < 700) {
+        return [204, 200, 2]
+    } else {
+        return [304, 300, 3]
+    }
+}
 
-    const totalQuestions = 10
-    const [windowSize, setWindowSize] = useState([ typeof window !== 'undefined' ? window.innerWidth : 0, 
+export default function Lesson1() {
+    const [windowSize, setWindowSize] = useState([ typeof window !== 'undefined' ? window.innerWidth : 0,
                                                    typeof window !== 'undefined' ? window.innerHeight : 0])
     const [isCorrect, setIsCorrect] = useState(false)
     const [hasAnswered, setHasAnswered] = useState(false)
@@ -65,6 +72,7 @@ export default function Lesson1() {
     const [answer, setAnswer] = useState('g/4') //initial 
 
     const userAns = {note: '', octave: ''}
+    const totalQuestions = 10
 
 
     useEffect(() => {
@@ -85,26 +93,10 @@ export default function Lesson1() {
     useEffect(() => {
             if (currentQuestion < totalQuestions) {
                 document.getElementById('output')?.replaceChildren();
-                let sizeW = 0 
-                let sizeH = 0
-                let scale = 0
-                if (windowSize[0] > 1920 && windowSize[0] > 1000) {
-                    sizeW = 404
-                    sizeH = 400
-                    scale = 4
-                } else if (windowSize[0] < 700) {
-                    sizeW = 204
-                    sizeH = 200
-                    scale = 2
-                } else {
-                    sizeW = 304
-                    sizeH = 300
-                    scale = 3
-                }
+
+                const [sizeW, sizeH, scale] = scaleSVGImage(windowSize[0], windowSize[1])
                 const renderer = new Renderer("output", Renderer.Backends.SVG)
                 renderer.resize(sizeW, sizeH)
-                //340, 350 scale: 3
-                //253, 250 scale: 2.5
                 const context = renderer.getContext()
                 context.scale(scale, scale)
                 const stave = new Stave(0,0, 100)
@@ -137,8 +129,8 @@ export default function Lesson1() {
     }
 
     return (
-        <div className="grid border-4 border-solid border-red-700 h-screen">
-            {currentQuestion === totalQuestions ? 
+        <div className="h-screen flex flex-col">
+            { currentQuestion === totalQuestions ? 
                 <>
                     <div className='flex flex-col justify-center items-center border-4 border-solid border-orange-900 h-screen'>
                         <div className='flex flex-col justify-center border-4 border-solid border-black w-fit'>
@@ -150,16 +142,18 @@ export default function Lesson1() {
                     </div>
                 </> : 
                 <>
-                    <div className="flex border-4 border-solid border-orange-600"> 
-                        <Link href='/' className='flex items-center justify-center'>
-                            <button className='font-extrabold text-2xl text-center'>X</button>
-                        </Link>
-                        <h3 className='m-auto text-center text-4xl font-semibold'>Question {currentQuestion}</h3>
+                    <div className='flex flex-row justify-center items-center flex-wrap bg-green-1 py-4'> 
+                        <div className='flex flex-row w-1/2'>
+                            <Link href='/' className=''>
+                                <button className='font-extrabold text-xl'>X</button>
+                            </Link>
+                            <p className='text-xl font-semibold m-auto text-white'>Q{currentQuestion}</p>
+                        </div>
                     </div>
-                    <div id="output" className="flex justify-center border-4 border-solid border-blue-700"></div>  {/* output is the SVG image to include */}
-                    <div className='flex justify-center items-center border-4 border-solid border-gray-700 text-4xl font-semibold'>Identify the note and octave.</div> 
-                    <div className='border-4 border-solid border-green-700 p-1 flex flex-row justify-center items-center flex-wrap gap-10'>
-                        <div className={`border-4 border-solid border-green-700 flex-wrap w-96 ${ hasAnswered ? 'pointer-events-none': ''}`}>
+                    <div id="output" className='flex justify-center'></div>  {/* output is the SVG image to include */}
+                    <div className='flex justify-center items-center text-3xl font-semibold pt-7 pb-14'>Identify the note and octave.</div> 
+                    <div className='border-b-2 border-solid border-gray-400 flex flex-row justify-center items-center flex-wrap gap-10 pb-8'>
+                        <div className={`flex-wrap w-2/12 ${ hasAnswered ? 'pointer-events-none': ''}`}>
                             <ButtonGroup
                                 onChange={(index) => {
                                     userAns.note = notes[index]
@@ -170,7 +164,7 @@ export default function Lesson1() {
                                 hasAnswered={hasAnswered}
                                 />                
                         </div>
-                        <div className={`border-4 border-solid border-purple-400 flex-wrap w-96 ${ hasAnswered ? 'pointer-events-none' : ''}`}>
+                        <div className={`flex-wrap w-2/12 ${ hasAnswered ? 'pointer-events-none' : ''}`}>
                             <ButtonGroup
                                 onChange={(index) => {
                                     userAns.octave = String(index+1)
@@ -182,22 +176,28 @@ export default function Lesson1() {
                                 />                
                         </div>
                     </div>
-                    <div className={`border-4 border-solid border-purple-700 flex justify-center item-center text-3xl row-span-3 ${!hasAnswered ? '' : 'hidden'}`}> 
-                        <button className='font-bold' onClick={() => isUserCorrect()} tabIndex={-1}>Check</button>
+                    <div className={`flex flex-row justify-center item-center flex-1 text-2xl ${!hasAnswered ? '' : 'hidden'}`}> 
+                        <div className='flex flex-row w-2/5 justify-end'>
+                            <button className='font-bold' onClick={() => isUserCorrect()} tabIndex={-1}>Check</button>
+                        </div>
                     </div>
-                    <div className={`border-4 border-solid border-purple-700 row-span-3 ${hasAnswered ? '' : 'hidden'}`}>
+                    <div className={`flex flex-1 ${hasAnswered ? '' : 'hidden'}`}>
                             { isCorrect ? 
-                                <div className='bg-green-600 flex justify-center items-center text-3xl gap-10 h-full'>
-                                    <h3 className='bg-green-600'>Correct!</h3>
-                                    <button className='' onClick={() => nextQuestion()} tabIndex={-1}> Continue </button>
+                                <div className='bg-green-1 flex justify-center flex-1 items-center text-2xl gap-10 translation'>
+                                    <div className='flex flex-row w-2/5 justify-between'>
+                                        <h3 className='text-white'>Correct! <br/> Answer: {answer.replace('/', '').toUpperCase()}</h3>
+                                        <button className='text-white' onClick={() => nextQuestion()} tabIndex={-1}> Continue </button>
+                                    </div>
                                 </div> : 
-                                <div className='bg-red-700 flex justify-center items-center text-3xl gap-10 h-full'>
-                                    <h3 className='bg-red-700'> Incorrect :&#40; Answer: {answer.replace('/', '').toUpperCase()}</h3>
-                                    <button className='' onClick={() => nextQuestion()} tabIndex={-1}> Continue </button>
+                                <div className='bg-red-700 flex justify-center flex-1 items-center text-2xl gap-10'>
+                                    <div className='flex flex-row w-2/5 justify-between'>
+                                        <h3 className='text-white'> Incorrect :&#40; <br/> Answer: {answer.replace('/', '').toUpperCase()}</h3>
+                                        <button className='text-white' onClick={() => nextQuestion()} tabIndex={-1}> Continue </button>
+                                    </div>
                                 </div>
                             }
                     </div>
-                </>}
+                </> }
         </div>  
     )
 }

@@ -27,9 +27,9 @@ export default function NavBar() {
                 alt='logo'
                 />
             </div> */}
-            <div className='flex flex-row md:flex-2 gap-10 pr-2 h-16 z-20'>
-                <button className='relative hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold p-2 text-white'>Contact Us</button>
-                <button className='relative hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold p-2 text-white' onClick={toSecondPage}>Why NoTheory</button>
+            <div className='flex flex-row md:flex-2 gap-10 pr-4'>
+                <button className='relative hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold text-white py-4'>Contact Us</button>
+                <button className='relative hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold text-white py-4' onClick={toSecondPage}>Why NoTheory</button>
             </div>
         </div>
     )

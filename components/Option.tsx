@@ -14,7 +14,7 @@ export const Option = (props:IProps) => {
     const isSelected = props.index === props.selectedIndex && !props.hasAnswered
 
     return (
-        <button className={`flex justify-center items-center text-5xl border-4 border-solid border-black rounded-lg w-20 h-20 ${isSelected && 'ring-green-500 ring-4 duration-200'}`} onClick={() => props.onSelect(props.index)}>
+        <button className={`flex justify-center items-center text-3xl font-semibold text-black border-4 border-solid border-gray-700 rounded-2xl w-16 h-16 ${isSelected && 'ring-green-1 ring-4 duration-200'}`} onClick={() => props.onSelect(props.index)}>
             {props.children}
         </button> 
     )
