@@ -20,7 +20,7 @@ export default function FirstPage() {
                             <button className="bg-green-1 hover:bg-green-2 text-white duration-500 py-0 px-3 mr-1 rounded-xl font-semibold text-xl w-full h-12">Get Started</button>
                         </div>
                         <div className='flex-1'>
-                            <Link href='/lessons'>
+                            <Link href='/dashboard'>
                                 <button className="bg-green-1 hover:bg-green-2 text-white duration-500 py-0 px-3 rounded-xl font-semibold text-xl w-full h-12">[DEMO]Login</button>
                             </Link>
                         </div>

@@ -1,9 +1,9 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import '../../styles/globals.css'
-import {notes} from '../../components/globals/globals'
+import { notes } from '../../../components/globals/globals'
 import Link from 'next/link'
-import { ButtonGroup } from '../../components/ButtonGroup'
+import '../../../styles/globals.css'
+import { ButtonGroup } from '../../../components/ButtonGroup'
 import vexflow, { Factory, EasyScore, System, Renderer, Stave, StaveNote, Voice, Formatter, Stem, Annotation, drawDot, RenderContext, ModifierContext, TickContext } from 'vexflow'
 
 //Testing TexFlow
@@ -69,7 +69,7 @@ export default function Lesson1() {
     const [isCorrect, setIsCorrect] = useState(false)
     const [hasAnswered, setHasAnswered] = useState(false)
     const [currentQuestion, setCurrentQuestion] = useState(1)
-    const [answer, setAnswer] = useState('g/4') //initial 
+    const [answer, setAnswer] = useState('f/1') //initial 
 
     const userAns = {note: '', octave: ''}
     const totalQuestions = 10
@@ -100,10 +100,11 @@ export default function Lesson1() {
                 const context = renderer.getContext()
                 context.scale(scale, scale)
                 const stave = new Stave(0,0, 100)
+                // change to treble/bass/C
                 stave.addClef("treble").setContext(context).draw()
                 
                 console.log(answer)
-                let notesToStave = new StaveNote({keys: [answer], duration: 'w'})
+                let notesToStave = new StaveNote({keys: [answer], duration: 'w', clef:'treble'}) //be sure to make a difference
 
                 let finalize = draw(notesToStave, stave, context, 1*15)
             }
@@ -135,7 +136,7 @@ export default function Lesson1() {
                     <div className='flex flex-col justify-center items-center border-4 border-solid border-orange-900 h-screen'>
                         <div className='flex flex-col justify-center border-4 border-solid border-black w-fit'>
                             <h3 className='border-solid border-4 border-yellow-400 text-3xl text-center font-extrabold'>GOOD JOB</h3>
-                            <Link href='/' className=' border-solid border-4 border-orange-400 text-xl text-center'>
+                            <Link href='/dashboard' className='border-solid border-4 border-orange-400 text-xl text-center'>
                                 <button className='font-extrabold'>CONTINUE</button>
                             </Link>
                         </div>
@@ -144,15 +145,15 @@ export default function Lesson1() {
                 <>
                     <div className='flex flex-row justify-center items-center flex-wrap bg-green-1 py-4'> 
                         <div className='flex flex-row w-1/2'>
-                            <Link href='/' className=''>
-                                <button className='font-extrabold text-xl'>X</button>
+                            <Link href='/dashboard' className=''>
+                                <button className='font-extrabold text-xl text-white'>X</button>
                             </Link>
                             <p className='text-xl font-semibold m-auto text-white'>Q{currentQuestion}</p>
                         </div>
                     </div>
                     <div id="output" className='flex justify-center'></div>  {/* output is the SVG image to include */}
                     <div className='flex justify-center items-center text-3xl font-semibold pt-7 pb-14'>Identify the note and octave.</div> 
-                    <div className='border-b-2 border-solid border-gray-400 flex flex-row justify-center items-center flex-wrap gap-10 pb-8'>
+                    <div className='border-b-2 border-solid border-gray-400 flex flex-row justify-center items-center flex-wrap gap-10 pb-20'>
                         <div className={`flex-wrap w-2/12 ${ hasAnswered ? 'pointer-events-none': ''}`}>
                             <ButtonGroup
                                 onChange={(index) => {

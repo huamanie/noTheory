@@ -28,8 +28,8 @@ export default function NavBar() {
                 />
             </div> */}
             <div className='flex flex-row md:flex-2 gap-10 pr-4'>
-                <button className='relative hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold text-white py-4'>Contact Us</button>
-                <button className='relative hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold text-white py-4' onClick={toSecondPage}>Why NoTheory</button>
+                <button className='hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold text-white py-4 px-1'>Contact Us</button>
+                <button className='hover:bg-green-2 rounded-lg duration-500 text-xl font-semibold text-white py-4 px-1' onClick={toSecondPage}>Why NoTheory</button>
             </div>
         </div>
     )
